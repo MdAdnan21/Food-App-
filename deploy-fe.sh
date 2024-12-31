@@ -14,7 +14,7 @@ else
 fi
 
 # Pull the latest changes from GitHub
-git pull 
+git pull
 if [ $? -eq 0 ]; then
     echo -e "\n${GREEN}Git pull successful${NC}\n"
 else
@@ -32,7 +32,7 @@ else
 fi
 
 # Run npm build
-npm run build
+pnpm start
 if [ $? -eq 0 ]; then
     echo -e "\n${GREEN}npm run build successful${NC}\n"
 else
