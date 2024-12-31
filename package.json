@@ -4,7 +4,7 @@
   "description": "The Food App is a web application that allows users to browse restaurants, view menus, and place orders",
   "scripts": {
     "start": "parcel index.html --no-cache",
-    "build": "parcel build index.html",
+    "build": "react-scripts build",
     "test": "jest"
   },
   "repository": {
