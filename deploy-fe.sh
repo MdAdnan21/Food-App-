@@ -1,34 +1,64 @@
 #!/bin/bash
 
-# Exit the script as soon as a command fails
-set -e
+# Define color codes
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NC='\033[0m' # No Color
 
-# Print each command before it is executed (for debugging)
-set -x
+git reset --hard
+if [ $? -eq 0 ]; then
+    echo -e "\n${GREEN}Git reset successful${NC}\n"
+else
+    echo -e "\n${RED}Git reset failed${NC}\n"
+    exit 1
+fi
 
-# Step 1: Install dependencies using pnpm
-echo "Installing dependencies..."
-pnpm install
+# Pull the latest changes from GitHub
+git pull
+if [ $? -eq 0 ]; then
+    echo -e "\n${GREEN}Git pull successful${NC}\n"
+else
+    echo -e "\n${RED}Git pull failed${NC}\n"
+    exit 1
+fi
 
-# Step 2: Build the project
-echo "Building the project..."
-pnpm run build
+# Install npm dependencies
+npm install
+if [ $? -eq 0 ]; then
+    echo -e "\n${GREEN}npm install successful${NC}\n"
+else
+    echo -e "\n${RED}npm install failed${NC}\n"
+    exit 1
+fi
 
-# Step 3: Deploy the project
-# Here, I'm assuming you're deploying to a platform like Vercel or Netlify
-# Uncomment the deployment commands below depending on your platform:
+# Run npm build
+npm run build
+if [ $? -eq 0 ]; then
+    echo -e "\n${GREEN}npm run build successful${NC}\n"
+else
+    echo -e "\n${RED}npm run build failed${NC}\n"
+    exit 1
+fi
 
-# For Vercel:
-echo "Deploying to Vercel..."
-vercel --prod
+# Copy build files to the appropriate directory
+sudo cp -R dist/ /var/food-app/vhosts/frontend/
+if [ $? -eq 0 ]; then
+    echo -e "\n${GREEN}Copying build files successful${NC}\n"
+else
+    echo -e "\n${RED}Copying build files failed${NC}\n"
+    exit 1
+fi
 
-# For Netlify:
-# echo "Deploying to Netlify..."
-# netlify deploy --prod
+# Restart Nginx
+sudo systemctl restart nginx
+if [ $? -eq 0 ]; then
+    echo -e "\n${GREEN}Nginx restart successful${NC}\n"
+else
+    echo -e "\n${RED}Nginx restart failed${NC}\n"
+    exit 1
+fi
 
-# Step 4: Any additional steps after the deployment
-# For example, you can run tests or cleanup if necessary
-# echo "Running tests..."
-# pnpm run test
-
-echo "Deployment completed successfully!"
+# Print deploy success message
+echo -e "\n${GREEN}******************${NC}"
+echo -e "${GREEN}**Deploy Successful**${NC}"
+echo -e "${GREEN}******************${NC}\n"
